@@ -1,6 +1,3 @@
-
-
-
 /*
 
   弾：
@@ -103,6 +100,23 @@
         <option value="天渡">天渡</option>
     </select>
 
+
+       ブロックアイコン：
+                                    <input type="checkbox" id="card_info_46_no4" name="card_info_46_no4" value="4">
+                                    <label for="card_info_46_no4">4</label>
+                                    <input type="checkbox" id="card_info_46_no5" name="card_info_46_no5" value="5">
+                                    <label for="card_info_46_no5">5</label>
+                                    <input type="checkbox" id="card_info_46_no6" name="card_info_46_no6" value="6">
+                                    <label for="card_info_46_no6">6</label>
+
+
+
+    <ul class="formBtnCol">
+                                    <li class="btnSearch"><a onClick="getCards()" name="search" id="search">検索</a></li>
+                                    <li class="btnClear"><a onClick="cardSerchReset()" id="card_reset">クリア</a></li>
+                                </ul>
+
+
  */
 
 // google translate : https://www.npmjs.com/package/@google-cloud/translate
@@ -110,7 +124,20 @@
 const request = require('request-promise');
 const cheerio = require('cheerio');
 
-const URL = 'https://www.imdb.com/title/tt0102926/?ref_=nv_sr_1';
+const URL = 'https://www.battlespirits.com/mydeck/deckapp.html';
+
+const getOptionsToString = function ($, select_name) {
+
+    // 參考資料 : https://github.com/cheeriojs/cheerio#map-functionindex-element-
+    let select_option = $(`select[name=${select_name}] > option`).map(function (index, element) {
+        // this === element
+        return $(element).text();
+    }).get().join(',');
+
+    console.log(`select[name=${select_name}]=>`, select_option);
+
+    return select_option;
+};
 
 (async () => {
 
@@ -118,8 +145,11 @@ const URL = 'https://www.imdb.com/title/tt0102926/?ref_=nv_sr_1';
 
     let $ = cheerio.load(response);
 
-    let title = $('div[class="title_wrapper"] > h1').text();
-    let rating = $('span[itemprop="ratingValue"]').text();
+    getOptionsToString($,'card_prod');  // =>   弾： BS02【激翔】 . BS24 アルティメットバトル01 ...
+    getOptionsToString($,'card_info_13');  // =>  レアリティ： U.C.R
+    getOptionsToString($,'card_info_4');  // => 	カード属性：赤.青
+    getOptionsToString($,'card_info_5');  // => 	カードコスト： 0 . 1 . 2 ...
+    getOptionsToString($,'card_info_3');  // => 	 カードカテゴリ： スピリット . アルティメット ...
+    getOptionsToString($,'card_info_25'); //  =>  系統： 道化 . 漂精 ...
 
-    console.log(title, rating);
 })();
