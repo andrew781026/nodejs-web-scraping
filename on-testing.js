@@ -43,7 +43,29 @@ const getEmitter = () => {
     return emitter;
 };
 
+
 const emitter = getEmitter();
 emitter.on('show-name', (firstName, lastName) => console.log(firstName, ',', lastName));
 emitter.emit('show-name', 'Bob', 'Chang');
 emitter.emit('show-name', 'Bob', 'Chang');
+
+
+class EventEmitter {
+    events = {};
+
+    on = (event, listener) => this.events[event] = listener;
+    emit = (event, ...args) => this.events[event] && this.events[event](...args);
+    once = (event, listener) => {
+        const self = this;
+        self.events[event] = function () {
+            listener(...arguments);
+            self.events[event] = null;
+        }
+    }
+}
+
+const events = {EventEmitter};
+const secondEmitter = new events.EventEmitter();
+secondEmitter.on('show-city', (city, county) => console.log(city, ',', county));
+secondEmitter.emit('show-city', 'Taipei', 'Taiwan');
+secondEmitter.emit('show-city', 'California', 'US');
